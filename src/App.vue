@@ -1,9 +1,20 @@
+<template>
+  <div>
+    <Search :keyword="keyword" :handleChangeKeyword="handleChangeKeyword" :enterKeyword="enterKeyword" :handleSubmit="handleSubmit" />
+    <List :userList="userList" />
+  </div>
+</template>
+
 <script setup lang="ts">
+
 import Search from './components/search/Search.vue';
-
+import List from './components/list/List.vue';
 import { onMounted, ref, watch } from 'vue';
-const {keyword, setKeyword, enterKeyword, handleSubmit} = useKeyword()
+import { UserList } from './lib/type';
+import { fetchMultiUser, fetchUserList } from './lib/api';
 
+const {keyword, handleChangeKeyword, enterKeyword} = useKeyword()
+const {userList, handleSubmit} = useUserList()
 watch(enterKeyword, ()=>{
   console.log('a')
 })
@@ -12,26 +23,33 @@ watch(enterKeyword, ()=>{
 function useKeyword() {
   const keyword = ref<string>('')
   const enterKeyword = ref<string>('')
-  function setKeyword(e: InputEvent) {
+  function handleChangeKeyword(e: InputEvent) {
     keyword.value = e.target?.value
   }
-  function handleSubmit(e: SubmitEvent) {
-    enterKeyword.value = e.target?.value
-  }
-  return {keyword, setKeyword, enterKeyword, handleSubmit}
+  return {keyword, handleChangeKeyword, enterKeyword}
 }
 
+function useUserList() {
+  const userList = ref<UserList>({
+    items: [],
+    incomplete_results: false,
+    total_count: 0
+  })
 
-
+  async function handleSubmit(e: SubmitEvent) {
+    const fetchedUserList = await fetchUserList(e.target?.value)
+    const userDetailList = await fetchMultiUser(fetchedUserList)
+    console.log(userDetailList)
+    fetchedUserList.items = userDetailList
+    userList.value = fetchedUserList
+  }
+  
+  return { userList, handleSubmit }
+}
 
 </script>
 
-<template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <Search :keyword="keyword" :setKeyword="setKeyword" :enterKeyword="enterKeyword" :handleSubmit="handleSubmit" />
-</template>
-
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

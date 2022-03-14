@@ -1,38 +1,41 @@
-<template lang="">
+<template>
   <div>
 
-    <input type="text" :value="keyword" @input="setKeyword" @change="handleSubmit" >
+    <input class="very-good-input" type="text" :value="keyword" @input="handleChangeKeyword($event)" @change="handleSubmit($event)" >
     <p>k - {{keyword}}</p>
     <p>fk - {{enterKeyword}}</p>
   </div>
 </template>
 
-
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
-const {keyword, setKeyword, enterKeyword, handleSubmit} = defineProps(['keyword', 'setKeyword', 'enterKeyword', 'handleSubmit'])
+import { onMounted, ref, watch, defineComponent } from 'vue';
 
-onMounted(()=>{
-})
-// watch(enterKeyword, ()=>{
-//   console.log('a')
-// })
-
-
-// function useKeyword() {
-//   const keyword = ref<string>('')
-//   const enterKeyword = ref<string>('')
-//   console.log(keyword.value)
-//   function setKeyword(e: InputEvent) {
-//     keyword.value = e.target?.value
-//   }
-//   function handleSubmit(e: SubmitEvent) {
-//     enterKeyword.value = e.target?.value
-//   }
-//   return {keyword, setKeyword, enterKeyword, handleSubmit}
-// }
+const {
+  keyword, 
+  handleChangeKeyword, 
+  enterKeyword, 
+  handleSubmit
+} = defineProps<{
+  keyword: string
+  handleChangeKeyword: Function
+  enterKeyword: string
+  handleSubmit: Function
+}>()
 
 </script>
-<style lang="">
-  
+
+<style lang="scss" scoped>
+.very-good-input {
+  height: 20px;
+  border: none;
+  border-bottom: 2px solid gray;
+  margin-left: 5px;
+  width: 95%;
+  &:focus {
+    outline: none;
+    font-size: 15px;
+    border: 2px solid gray;
+    border-radius: 3px;
+  }
+}
 </style>
